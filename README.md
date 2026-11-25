@@ -8,9 +8,9 @@ One line, 1 to 240 characters, that gives the judge a quiet, earned moment of pr
 
 ## The line
 
-> After three fittings, the grandson's sleeve falls straight to his wrist, and she clips the last thread.
+> Sweat at his temple, knuckles white on the rumpled shirt, the stroke patient works the top button through and straightens his own collar.
 
-103 characters. A small person doing something hard — a grandmother sewing for her grandson, three fittings in — and the pride is earned inside the line by the effort the reader can feel (the repeated fittings, the final snip), never asserted or congratulated. The scene is concrete (sleeve, wrist, thread), and the pride lands by the last word.
+137 characters. A small person doing something hard — a stroke patient dressing himself, sweat at his temple, knuckles white — and the pride is earned inside the line by the effort the reader can feel (working the top button through, straightening his own collar), never asserted or congratulated. The scene is concrete (temple, knuckles, shirt, button, collar), and the pride lands by the last word.
 
 ## Run it
 

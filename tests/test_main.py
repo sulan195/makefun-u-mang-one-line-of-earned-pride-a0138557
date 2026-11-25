@@ -17,8 +17,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import main as entry
 
 EXPECTED_LINE = (
-    "After three fittings, the grandson's sleeve falls straight to his "
-    "wrist, and she clips the last thread."
+    "Sweat at his temple, knuckles white on the rumpled shirt, the stroke "
+    "patient works the top button through and straightens his own collar."
 )
 
 
@@ -26,8 +26,8 @@ class LineContentTests(unittest.TestCase):
     def test_line_is_exact_expected_text(self):
         self.assertEqual(entry.LINE, EXPECTED_LINE)
 
-    def test_line_length_is_103_chars(self):
-        self.assertEqual(len(entry.LINE), 103)
+    def test_line_length_is_137_chars(self):
+        self.assertEqual(len(entry.LINE), 137)
 
     def test_line_is_a_single_line(self):
         self.assertNotIn("\n", entry.LINE)
@@ -125,10 +125,10 @@ class OutputDirTests(unittest.TestCase):
         finally:
             del os.environ["MAKEFUN_OUTPUT_DIR"]
 
-    def test_env_value_returned_verbatim(self):
+    def test_env_value_is_stripped(self):
         os.environ["MAKEFUN_OUTPUT_DIR"] = "  /tmp/spaced  "
         try:
-            self.assertEqual(entry.output_dir(), "  /tmp/spaced  ")
+            self.assertEqual(entry.output_dir(), "/tmp/spaced")
         finally:
             del os.environ["MAKEFUN_OUTPUT_DIR"]
 
@@ -174,6 +174,23 @@ class MainUnitTests(unittest.TestCase):
             os.environ["MAKEFUN_OUTPUT_DIR"] = tmp
             try:
                 self.assertEqual(entry.main(), 1)
+            finally:
+                del os.environ["MAKEFUN_OUTPUT_DIR"]
+
+    def test_failed_write_keeps_previous_entry_intact(self):
+        # Atomicity: a mid-write failure must not truncate an existing file.
+        from unittest import mock
+
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "entry.txt"
+            target.write_text("previous entry", encoding="utf-8")
+            os.environ["MAKEFUN_OUTPUT_DIR"] = tmp
+            try:
+                with mock.patch.object(
+                    entry.tempfile, "mkstemp", side_effect=OSError("disk full")
+                ):
+                    self.assertEqual(entry.main(), 1)
+                self.assertEqual(target.read_text(encoding="utf-8"), "previous entry")
             finally:
                 del os.environ["MAKEFUN_OUTPUT_DIR"]
 

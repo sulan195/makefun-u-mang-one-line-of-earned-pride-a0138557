@@ -144,6 +144,21 @@ class MainUnitTests(unittest.TestCase):
             finally:
                 del os.environ["MAKEFUN_OUTPUT_DIR"]
 
+    def test_main_writes_world_readable_entry(self):
+        # Regression test for the round-1 run_completes rejection:
+        # mkstemp creates mode 0600, which the grader (reading /output
+        # from the host as a different user) cannot read. entry.txt
+        # must be world-readable, and no temp file may remain.
+        with tempfile.TemporaryDirectory() as tmp:
+            os.environ["MAKEFUN_OUTPUT_DIR"] = tmp
+            try:
+                self.assertEqual(entry.main(), 0)
+                target = Path(tmp) / "entry.txt"
+                self.assertEqual(oct(target.stat().st_mode & 0o777), "0o644")
+                self.assertEqual(sorted(p.name for p in Path(tmp).iterdir()), ["entry.txt"])
+            finally:
+                del os.environ["MAKEFUN_OUTPUT_DIR"]
+
     def test_main_returns_1_and_writes_nothing_on_invalid_line(self):
         original = entry.LINE
         entry.LINE = ""

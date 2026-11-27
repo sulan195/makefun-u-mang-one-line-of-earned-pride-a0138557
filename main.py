@@ -101,6 +101,13 @@ def main():
         try:
             with os.fdopen(fd, "w", encoding="utf-8", newline="") as handle:
                 handle.write(LINE)
+            # mkstemp creates the file mode 0600 owned by the sandbox user
+            # (65534). The grader collects /output from the host as a
+            # different user, so a 0600 entry.txt is unreadable to it and
+            # fails run_completes ("entry.txt is not readable"). Make the
+            # file world-readable BEFORE the atomic rename, so the
+            # published entry.txt is always 0644.
+            os.chmod(tmp_path, 0o644)
             os.replace(tmp_path, path)
         except OSError:
             try:
